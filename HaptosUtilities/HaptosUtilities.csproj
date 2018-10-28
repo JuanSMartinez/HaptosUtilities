@@ -39,11 +39,22 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="UnityEngine">
+    <Reference Include="Taps">
+      <HintPath>..\..\Taps\Taps\bin\Release\Taps.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Program Files\Unity_2018_2\Editor\Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Game.cs" />
+    <Compile Include="PersistenceUtilities.cs" />
+    <Compile Include="Phoneme.cs" />
+    <Compile Include="Player.cs" />
+    <Compile Include="Quest.cs" />
+    <Compile Include="Stimulus.cs" />
+    <Compile Include="TestMonitor.cs" />
     <Compile Include="TimeUtilities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
