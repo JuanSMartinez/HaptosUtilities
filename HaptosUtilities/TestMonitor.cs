@@ -29,19 +29,13 @@ namespace HaptosUtilities
 
             }
         }
-
-        //Percent correct score
-        private double percentCorrect;
-        public double PercentCorrect
-        {
-            get
-            {
-                return percentCorrect;
-            }
-        }
+        public float PercentCorrect { get; private set; }
 
         //Stimulus-response set
         private List<string> stimuliResponsePairs;
+
+        //Response times array in seconds
+        private List<float> responseTimesSeconds;
 
         //Test stimuli
         private Queue<Stimulus> testStimuli;
@@ -53,7 +47,8 @@ namespace HaptosUtilities
             Stimuli = stimuli;
             testStimuli = new Queue<Stimulus>();
             stimuliResponsePairs = new List<string>();
-            percentCorrect = 0;
+            responseTimesSeconds = new List<float>();
+            PercentCorrect = 0;
             r = new Random();
             GenerateRandomStimuliSet();
 
@@ -63,8 +58,9 @@ namespace HaptosUtilities
         private void GenerateRandomStimuliSet()
         {
             for(int i =0; i < trials; ++i)
-            {
-                testStimuli.Enqueue(Stimuli.ElementAt(r.Next(0, Stimuli.Count)));
+            {     
+                Stimulus newStimulus = GetRandomStimulus();
+                testStimuli.Enqueue(newStimulus);
             }
         }
 
@@ -84,34 +80,37 @@ namespace HaptosUtilities
         }
 
         //Record a stimulus-reponse pair
-        public void RecordStimulusResponsePair(string stimulusName, string responseName)
+        public void RecordStimulusResponsePair(string stimulusName, string responseName, float responseTime)
         {
             if (stimulusName.Equals(responseName))
-                percentCorrect += 1.0;
+                PercentCorrect += 1f;
             stimuliResponsePairs.Add(stimulusName + "," + responseName);
+            responseTimesSeconds.Add(responseTime);
         }
 
         //Finalize test
         public void FinishTest()
         {
-            percentCorrect = percentCorrect / trials;
+            PercentCorrect = PercentCorrect / (1f*trials);
         }
 
         //Generate trial response log
         public string GenerateResponseLog()
         {
-            string response = "";
+            string response = "Stimulus,Response,ResponseTime(s)\n";
             int i = 0;
             foreach(string pair in stimuliResponsePairs)
             {
+                float responseTime = responseTimesSeconds.ElementAt(i);
                 ++i;
                 if (i < stimuliResponsePairs.Count)
-                    response += pair + "\n";
+                    response += pair + ","+ responseTime + "\n";
                 else
-                    response += pair;
+                    response += pair + "," + responseTime;
             }
             return response;
         }
+
 
         //Generate confusion matrix log
         public string GenerateConfusionMatrixLog()

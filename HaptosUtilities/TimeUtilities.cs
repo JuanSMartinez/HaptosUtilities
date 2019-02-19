@@ -43,6 +43,18 @@ namespace HaptosUtilities
             StartStopWatch(stopWatches[(int)session]);
         }
 
+        //Peek into a running stopwatch
+        public long PeekSession(sessions session)
+        {
+            Stopwatch stopwatch = stopWatches[(int)session];
+            if (stopwatch.IsRunning)
+            {
+                return stopwatch.ElapsedMilliseconds;
+            }
+            else
+                return -1;
+        }
+
         //Stop a specific session
         public long StopSession(sessions session)
         {

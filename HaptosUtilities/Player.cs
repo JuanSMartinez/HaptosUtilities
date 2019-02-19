@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+
 namespace HaptosUtilities
 {
     [System.Serializable]
@@ -17,16 +18,17 @@ namespace HaptosUtilities
         //Player name
         public string Name { get; set; }
 
-        //Total training time
+        //Total training time in minutes
         public float TotalTrainingTime { get; set; }
 
-        //Total testing time
+        //Total testing time in minutes
         public float TotalTestingTime { get; set; }
 
         //Constructor
         public Player(string name)
         {
-            Level = 1;
+            Name = name;
+            Level = 0;
             QuestPoints = 0;
             TotalTrainingTime = 0;
             TotalTestingTime = 0;

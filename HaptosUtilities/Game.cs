@@ -2,48 +2,48 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
 namespace HaptosUtilities
 {
-    public class Game
+    public static class Game
     {
-        //Singleton
-        public static Game instance = null;
-        public static Game Instance
-        {
-            get
-            {
-                if (instance == null)
-                    instance = new Game();
-                return instance;
-            }
-        }
+        //Code name for the superplayer
+        private static string superPlayerName = "SuperJJ";
 
-        //Static reference to the current player
-        public static Player CurrentPlayer;
+        //reference to the current player
+        public static Player CurrentPlayer { get; set; }
 
         //Super player active
-        public bool SuperPlayer { get; set; }
-
-        //Constructor
-        private Game()
-        {
-            SuperPlayer = false;
-        }
+        public static bool SuperPlayer { get; set; }
 
         //Create a new character
-        public void CreateCharacter(string name)
+        public static bool CreateCharacter(string name)
         {
-            if (PersistenceUtilities.Instance.CreateFolerForPlayer(name))
+            if (name.Equals(superPlayerName))
             {
                 CurrentPlayer = new Player(name);
+                CurrentPlayer.Level = 999;
+                CurrentPlayer.QuestPoints = 999;
+                SuperPlayer = true;
+                return true;
+            }
+            else
+            {
+                if (PersistenceUtilities.CreateFolderForPlayer(name.ToUpper()))
+                {
+                    CurrentPlayer = new Player(name.ToUpper());
+                    return true;
+                }
+                else
+                    return false;
             }
         }
 
         //load a player
-        public void LoadPlayer(string playerName)
+        public static  void LoadPlayer(string playerName)
         {
-            CurrentPlayer = PersistenceUtilities.Instance.LoadPlayer(playerName);
+            CurrentPlayer = PersistenceUtilities.LoadPlayer(playerName);
         }
 
     }

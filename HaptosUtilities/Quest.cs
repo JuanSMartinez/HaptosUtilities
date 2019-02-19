@@ -14,6 +14,9 @@ namespace HaptosUtilities
         //Points worth
         public int PointsWorth;
 
+        //Required percent correct score to pass
+        public float requiredPercentCorrect;
+
         //External text asset where the stimuli are stored
         public TextAsset StimuliAsset;
 
@@ -30,6 +33,18 @@ namespace HaptosUtilities
 
         //Start testing mode
         public abstract void StartTestingMode();
+
+        //Stop training mode
+        public abstract void StopTrainingMode();
+
+        //Stop testing mode
+        public abstract void StopTestingMode();
+
+        //Abruptly stop training mode
+        public abstract void InterruptTrainingMode();
+
+        //Abruptly stop testing mode
+        public abstract void InterruptTestingMode();
 
     }
 }

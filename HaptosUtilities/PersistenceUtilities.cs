@@ -8,24 +8,11 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace HaptosUtilities
 {
-    public class PersistenceUtilities
+    public static class PersistenceUtilities
     {
 
-        //Singleton instance
-        private static PersistenceUtilities instance;
-
-        public static PersistenceUtilities Instance
-        {
-            get
-            {
-                if (instance == null)
-                    instance = new PersistenceUtilities();
-                return instance;
-            }
-        }
-
         //Creates a folder for a player
-        public bool CreateFolerForPlayer(string playerName)
+        public static bool CreateFolderForPlayer(string playerName)
         {
             if(!Directory.Exists(Application.dataPath + "/" + playerName))
             {
@@ -36,7 +23,7 @@ namespace HaptosUtilities
         }
 
         //Load a character
-        public Player LoadPlayer(string name)
+        public static Player LoadPlayer(string name)
         {
             string filePath = Application.dataPath + "/" + name + "/" + name + ".gd";
             if (File.Exists(filePath))
@@ -53,9 +40,9 @@ namespace HaptosUtilities
         }
 
         //Save the current player
-        public void SaveCurrentPlayer()
+        public static void SaveCurrentPlayer()
         {
-            if (!Game.Instance.SuperPlayer)
+            if (!Game.SuperPlayer)
             {
                 string filePath = Application.dataPath + "/" + Game.CurrentPlayer.Name + "/" + Game.CurrentPlayer.Name + ".gd";
                 BinaryFormatter bf = new BinaryFormatter();
@@ -66,7 +53,7 @@ namespace HaptosUtilities
         }
 
         //Get the list of saved games
-        public List<string> GetSavedGames()
+        public static List<string> GetSavedGames()
         {
             List<string> result = new List<string>();
             DirectoryInfo dir = new DirectoryInfo(Application.dataPath);
@@ -83,7 +70,7 @@ namespace HaptosUtilities
         }
 
         //Delete a saved game
-        public void DeleteSavedGame(string playerName)
+        public static void DeleteSavedGame(string playerName)
         {
             string filePath = Application.dataPath + "/" + playerName + "/" + playerName + ".gd";
             if (File.Exists(filePath))
@@ -96,44 +83,54 @@ namespace HaptosUtilities
         }
 
         //Save a quest log
-        public void SaveQuest(string questName,
-                                long trainingTime,
-                                long testingTime,
+        public static void SaveQuest(string questName,
+                                float trainingTime,
+                                float testingTime,
                                 float percentCorrectScore,
                                 string confusionMatrixLog,
-                                string responseTimesLog)
+                                string responseLog)
         {
+            //Do not do anything if the superplayer is active
+            if (Game.SuperPlayer)
+                return;
+
             string dateStamp = DateTime.Now.ToString("MM-dd-yyyy-HH;mm;ss");
 
             //Save quest log data
-            string fileQuest = Application.dataPath + "/" + Game.CurrentPlayer.Name + "/" + Game.CurrentPlayer.Name + "_" + questName + "_" + Game.CurrentPlayer.Name + ".qlog";
-            string questDataLog = "" + percentCorrectScore + "," + trainingTime + "," + testingTime + "," + Game.CurrentPlayer.TotalTrainingTime + "," + Game.CurrentPlayer.TotalTestingTime;
+            string fileQuest = Application.dataPath + "/" + Game.CurrentPlayer.Name + "/" + Game.CurrentPlayer.Name + "_" + questName + "_" +dateStamp+ "_qlog.csv";
+            string questDataLog = "PercentCorrect,TrainingTime(min),TestingTime(min),TotalTrainingTime(min),TotalTestingTime(min)\n";
+            questDataLog += "" + percentCorrectScore + "," + trainingTime + "," + testingTime + "," + Game.CurrentPlayer.TotalTrainingTime + "," + Game.CurrentPlayer.TotalTestingTime;
             SaveLog(fileQuest, questDataLog);
 
             //Save confusion matrix data
             string fileMatrix = Application.dataPath + "/" + Game.CurrentPlayer.Name + "/" + Game.CurrentPlayer.Name + "_" + questName + "_" + dateStamp + "_matrix.csv";
             SaveLog(fileMatrix, confusionMatrixLog);
 
-            //Save response times data
-            string fileResponseTimes = Application.dataPath + "/" + Game.CurrentPlayer.Name + "/" + Game.CurrentPlayer.Name + "_" + questName + "_" + dateStamp + "_response_times.csv";
-            SaveLog(fileResponseTimes, responseTimesLog);
+            //Save response data
+            string fileResponse = Application.dataPath + "/" + Game.CurrentPlayer.Name + "/" + Game.CurrentPlayer.Name + "_" + questName + "_" + dateStamp + "_responses.csv";
+            SaveLog(fileResponse, responseLog);
         }
 
         //Save a quest log without a testing experiment
-        public void SaveQuest(string questName,
-                                long trainingTime,
-                                long testingTime)
+        public static void SaveQuest(string questName,
+                                float trainingTime,
+                                float testingTime)
         {
+            //Do not do anything if the superplayer is active
+            if (Game.SuperPlayer)
+                return;
+
             string dateStamp = DateTime.Now.ToString("MM-dd-yyyy-HH;mm;ss");
 
             //Save quest log data
-            string fileQuest = Application.dataPath + "/" + Game.CurrentPlayer.Name + "/" + Game.CurrentPlayer.Name + "_" + questName + "_" + Game.CurrentPlayer.Name + ".qlog";
-            string questDataLog = "" + 0 + "," + trainingTime + "," + testingTime + "," + Game.CurrentPlayer.TotalTrainingTime + "," + Game.CurrentPlayer.TotalTestingTime;
+            string fileQuest = Application.dataPath + "/" + Game.CurrentPlayer.Name + "/" + Game.CurrentPlayer.Name + "_" + questName + "_" + dateStamp + "_qlog.csv";
+            string questDataLog = "PercentCorrect,TrainingTime(min),TestingTime(min),TotalTrainingTime(min),TotalTestingTime(min)\n";
+            questDataLog += "" + 0 + "," + trainingTime + "," + testingTime + "," + Game.CurrentPlayer.TotalTrainingTime + "," + Game.CurrentPlayer.TotalTestingTime;
             SaveLog(fileQuest, questDataLog);
         }
 
         //Save a string log to a file
-        private void SaveLog(string fileName, string log)
+        private static void SaveLog(string fileName, string log)
         {
             if (File.Exists(fileName))
                 File.Delete(fileName);
@@ -142,7 +139,57 @@ namespace HaptosUtilities
             writer.Close();
         }
 
-        
+        //Save a general log file to the datapath as a csv file
+        public static void SaveGeneralLog(string fileName, string log)
+        {
+            //Do not do anything if the superplayer is active
+            if (Game.SuperPlayer)
+                return;
+
+            string dateStamp = DateTime.Now.ToString("MM-dd-yyyy-HH;mm;ss");
+            string filePath = Application.dataPath + "/" + Game.CurrentPlayer.Name + "/" + Game.CurrentPlayer.Name + "_" + fileName + "_"+dateStamp+"_general.csv";
+            if (File.Exists(filePath))
+                File.Delete(filePath);
+            StreamWriter writer = File.CreateText(filePath);
+            writer.Write(log);
+            writer.Close();
+        }
+
+        //Save a general log file to the datapath assuming the datestamp is included and the extension is provided
+        public static void SaveGeneralLogWithDate(string fileName, string log)
+        {
+            //Do not do anything if the superplayer is active
+            if (Game.SuperPlayer)
+                return;
+
+            string filePath = Application.dataPath + "/" + Game.CurrentPlayer.Name + "/" + Game.CurrentPlayer.Name + "_" + fileName;
+            if (File.Exists(filePath))
+                File.Delete(filePath);
+            StreamWriter writer = File.CreateText(filePath);
+            writer.Write(log);
+            writer.Close();
+        }
+
+        //Searchs for a file with the name
+        public static string FindFullPathOfFile(string fileName)
+        {
+            string path = Application.dataPath + "/" + Game.CurrentPlayer.Name + "/" + Game.CurrentPlayer.Name + "_" + fileName;
+            return File.Exists(path) ? path : null;
+        }
+
+        //Append text to a file
+        public static bool AppendToFile(string path, string text)
+        {
+            if (File.Exists(path))
+            {
+                using (StreamWriter sw = File.AppendText(path))
+                {
+                    sw.WriteLine(text);
+                }
+                return true;
+            }
+            return false;
+        }
 
 
     }

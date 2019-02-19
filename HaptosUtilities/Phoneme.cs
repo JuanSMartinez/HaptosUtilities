@@ -9,25 +9,22 @@ namespace HaptosUtilities
     public class Phoneme : Stimulus
     {
 
-        //Phoneme label
-        public string Label { get; set; }
-
         //Constructor
         public Phoneme(string phonemeLabel)
         {
-            Label = phonemeLabel;
+            Name = phonemeLabel;
         }
     
 
         public override void DeliverStimulus()
         {
-            Motu.Instance.PlayPhoneme(Label);
+            Motu.Instance.PlayPhoneme(Name);
         }
 
         public override bool EqualsToOther(Stimulus other)
         {
             Phoneme otherPhoneme = other as Phoneme;
-            return Label.Equals(otherPhoneme.Label);
+            return Name.Equals(otherPhoneme.Name);
         }
     }
 }

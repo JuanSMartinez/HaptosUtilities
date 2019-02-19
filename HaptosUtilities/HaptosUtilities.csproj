@@ -44,11 +44,13 @@
     </Reference>
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Program Files\Unity_2018_2\Editor\Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files\Unity\Editor\Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CursorManager.cs" />
     <Compile Include="Game.cs" />
+    <Compile Include="IClickableObject.cs" />
     <Compile Include="PersistenceUtilities.cs" />
     <Compile Include="Phoneme.cs" />
     <Compile Include="Player.cs" />
